@@ -18,6 +18,17 @@ type robotService struct {
 	robotRepository repository.RobotRepository
 }
 
+func parseDate(value string) (time.Time, error) {
+	date, err := time.Parse("2006-01-02", value)
+	if err == nil {
+		return date, nil
+	} else {
+		return time.Time{}, &dto.ErrorResponse{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Invalid date format provided. The expected format is YYYY-MM-DD."}
+	}
+}
+
 func (r *robotService) GetRobots(request dto.RobotRequest) (dto.RobotResponse, error) {
 	if request.PageNumber == 0 {
 		request.PageNumber = 1
@@ -34,30 +45,36 @@ func (r *robotService) GetRobots(request dto.RobotRequest) (dto.RobotResponse, e
 				switch v := values.(type) {
 				case []interface{}:
 					if len(v) == 2 {
-						startDate, errStart := time.Parse("2006-01-02", v[0].(string))
-						endDate, errEnd := time.Parse("2006-01-02", v[1].(string))
-						if errStart == nil && errEnd == nil {
-							query = query.Where(key+" BETWEEN ? AND ?", startDate, endDate)
+						startDate, errStart := parseDate(v[0].(string))
+						if errStart != nil {
+							return response, errStart
 						}
+						endDate, errEnd := parseDate(v[1].(string))
+						if errEnd != nil {
+							return response, errEnd
+						}
+						query = query.Where(key+" BETWEEN ? AND ?", startDate, endDate)
 					} else if len(v) == 1 {
-						date, err := time.Parse("2006-01-02", v[0].(string))
-						if err == nil {
-							query = query.Where(key+"= ?", date)
+						date, err := parseDate(v[0].(string))
+						if err != nil {
+							return response, err
 						}
+						query = query.Where(key+"= ?", date)
 					} else if len(v) > 2 {
 						return response, &dto.ErrorResponse{
 							StatusCode: http.StatusBadRequest,
-							Message:    "invalid data type for " + key}
+							Message:    "Invalid data type for " + key + ". Only a date range with two dates [startDate, endDate] is supported."}
 					}
 				case string:
-					date, err := time.Parse("2006-01-02", v)
-					if err == nil {
-						query = query.Where(key+" = ?", date)
+					date, err := parseDate(v)
+					if err != nil {
+						return response, err
 					}
+					query = query.Where(key+" = ?", date)
 				default:
 					return response, &dto.ErrorResponse{
 						StatusCode: http.StatusBadRequest,
-						Message:    "invalid data type for " + key}
+						Message:    "Invalid data type for " + key + ". Only a single date in string format 'YYYY-MM-DD' or a date range [startDate, endDate] is supported."}
 				}
 
 			default:
