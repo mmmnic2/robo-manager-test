@@ -67,10 +67,10 @@ To build a new API for the project, follow these steps:
 - **Support for Multiple Databases**: Works seamlessly with PostgreSQL, MySQL, SQLite, and other databases.
 - **Powerful Features**: Supports migrations, table relationships, and is highly extensible.
 
-## API Documentation - `GET /api/v1/route/routes`
+## API Documentation - `GET /api/v1/robot/robots`
 
 ### Overview
-This API endpoint retrieves a list of routes with sorting, filtering, and pagination capabilities. It allows users to query and retrieve route data based on specific parameters such as sorting order, filters for specific fields, and pagination options.
+This API endpoint retrieves a list of robots with sorting, filtering, and pagination capabilities. It allows users to query and retrieve robot data based on specific parameters such as sorting order, filters for specific fields, and pagination options.
 
 ### Endpoint
 - **Method**: `GET`
