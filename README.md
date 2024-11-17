@@ -93,3 +93,33 @@ This API endpoint retrieves a list of robots with sorting, filtering, and pagina
   "limit": 10
 }
 ```
+### Request Body Explanation
+### sorting:
+- **column**: The field by which the results will be sorted. Currently, only support **single field** sorting.  
+  Example: `"name"`.
+
+- **order**: The sorting order.  
+  Can be `"asc"` for ascending or `"desc"` for descending.
+
+### filters:
+A set of filters to narrow down the search results. The available fields may vary depending on the specific model or entity, and the following are just examples:
+- **name**: Filters robots by name. 
+  Example: `"Robot A"`.
+  
+- **color**: Filters robots by a list of color values.  
+  Example: `["Red", "Yellow"]`.
+
+- **manufacturing_date**: Filters robots based on manufacturing date range.  
+  Example: `["2023-01-01", "2023-08-14"]`.
+
+- **additional_filter_1**: Description of additional filter.
+  
+- **additional_filter_2**: Description of additional filter.
+
+### page_number:
+- **page_number**: The page number for pagination.  
+  Example: `1` for the first page.
+
+### limit:
+- **limit**: The number of results to return per page.  
+  Example: `10`.
